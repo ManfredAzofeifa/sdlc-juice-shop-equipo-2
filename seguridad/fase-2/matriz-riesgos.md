@@ -4,12 +4,12 @@ Una fila por riesgo. La columna «Caso de abuso» cita los issues con #n. El che
 
 | ID | Amenaza | STRIDE | Caso de abuso | Probabilidad | Impacto | Riesgo | Tratamiento |
 |:---|:---|:---|:---|:---|:---|:---|:---|
-| R-01 | | | | | | | |
-| R-02 | | | | | | | |
-| R-03 | | | | | | | |
-| R-04 | | | | | | | |
-| R-05 | | | | | | | |
-| R-06 | | | | | | | |
+| R-01 | Cambio de contraseña sin validación actual | S | #3 | 2 | 3 | 6 | Corregir |
+| R-02 | Acceso a archivos sensibles sin auditoría | R | #4 | 3 | 2 | 6 | Mitigar |
+| R-03 | Acceso no autorizado a canastas ajenas | E | #5 | 3 | 2 | 6 | Corregir |
+| R-04 | Uso de privilegios revocados con JWT antiguo | E | #6 | 2 | 3 | 6 | Corregir |
+| R-05 | Exposición de hashes MD5 de contraseñas | I | #7 | 3 | 3 | 9 | Corregir |
+| R-06 | Falsificación de autoría mediante UserId | T | #12 | 3 | 2 | 6 | Corregir |
 
 ## Escala
 

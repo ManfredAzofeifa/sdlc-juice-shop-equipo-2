@@ -1,0 +1,73 @@
+
+name: Fase 3 - Seguridad PR
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  semgrep:
+    name: Analisis SAST con Semgrep
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Semgrep
+        run: pip install semgrep
+
+      - name: Probar regla propia
+        run: semgrep --test seguridad/fase-3/semgrep
+
+      - name: Analizar aplicacion
+        run: |
+          semgrep scan \
+            --config seguridad/fase-3/semgrep \
+            --error app/
+
+  gitleaks:
+    name: Deteccion de secretos con Gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Crear directorio de reportes
+        run: mkdir -p reportes
+
+      - name: Escanear secretos
+        run: |
+          docker run --rm \
+            -v "$PWD:/repo" \
+            ghcr.io/gitleaks/gitleaks:latest \
+            dir /repo \
+            --report-format json \
+            --report-path /repo/reportes/gitleaks.json \
+            --redact \
+            --exit-code 1
+
+      - name: Subir reporte
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-gitleaks
+          path: reportes/
+          if-no-files-found: ignore
+
+  dependencias:
+    name: Dependencias nuevas con Dependency Review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Revisar dependencias
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high

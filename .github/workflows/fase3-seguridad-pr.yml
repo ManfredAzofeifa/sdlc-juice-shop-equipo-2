@@ -1,0 +1,88 @@
+
+name: Fase 3 - Seguridad PR
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  semgrep:
+    name: Analisis SAST con Semgrep
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar Semgrep
+        run: python -m pip install semgrep
+
+      - name: Probar regla propia
+        run: semgrep --test seguridad/fase-3/semgrep
+
+      - name: Analizar aplicacion
+        run: |
+          semgrep scan \
+            --config seguridad/fase-3/semgrep \
+            --error app/
+
+  gitleaks:
+    name: Deteccion de secretos con Gitleaks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Preparar referencia de main
+        run: git fetch --no-tags origin main
+
+      - name: Crear directorio de reportes
+        run: mkdir -p reportes
+
+      - name: Escanear secretos nuevos del PR
+        run: |
+          docker run --rm \
+            -v "$PWD:/repo" \
+            ghcr.io/gitleaks/gitleaks:latest \
+            git /repo \
+            --log-opts="origin/main..HEAD" \
+            --report-format json \
+            --report-path /repo/reportes/gitleaks.json \
+            --redact \
+            --exit-code 1
+
+      - name: Subir reporte de Gitleaks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-gitleaks
+          path: reportes/
+          if-no-files-found: ignore
+
+  dependencias:
+    name: Dependencias nuevas con Dependency Review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Revisar dependencias
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high

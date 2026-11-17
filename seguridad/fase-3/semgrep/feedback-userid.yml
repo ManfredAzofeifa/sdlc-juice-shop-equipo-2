@@ -1,0 +1,30 @@
+
+rules:
+  - id: feedback-userid-no-confiar-cliente
+    message: >-
+      CWE-639: No utilizar el UserId proporcionado por el cliente
+      para establecer la autoría de un comentario.
+      Requerimiento #13.
+    severity: ERROR
+    languages:
+      - javascript
+      - typescript
+    metadata:
+      requerimiento: 13
+      cwe: CWE-639
+      categoria: seguridad
+      caso_abuso: 12
+    patterns:
+      - pattern-either:
+          - pattern: |
+              FeedbackModel.create({
+                ...,
+                UserId: req.body.UserId,
+                ...
+              })
+          - pattern: |
+              FeedbackModel.create({
+                ...,
+                UserId: request.body.UserId,
+                ...
+              })

@@ -35,7 +35,7 @@ Escriba los ID de riesgo en la celda que les corresponde.
 
 ```
             Impacto 1     Impacto 2     Impacto 3
-P 3      |             |             |             |
-P 2      |             |             |             |
+P 3      |             |     R-02/R-03/R-06        |      R05       |
+P 2      |             |             |             |       R-01/R-04     
 P 1      |             |             |             |
 ```

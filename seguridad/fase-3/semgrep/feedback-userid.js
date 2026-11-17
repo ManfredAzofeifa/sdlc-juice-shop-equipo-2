@@ -1,37 +1,33 @@
-function guardarComentarioInseguro(req) {
-  const feedback = {
-    // ruleid: feedback-userid-no-confiar-cliente
+
+const FeedbackModel = {
+  create: async (data) => data
+}
+
+async function feedbackInseguro(req) {
+  // ruleid: feedback-userid-no-confiar-cliente
+  await FeedbackModel.create({
+    comment: req.body.comment,
     UserId: req.body.UserId,
+    rating: 3
+  })
+}
+
+async function feedbackInseguroRequest(request) {
+  // ruleid: feedback-userid-no-confiar-cliente
+  await FeedbackModel.create({
+    comment: request.body.comment,
+    UserId: request.body.UserId,
+    rating: 4
+  })
+}
+
+async function feedbackSeguro(req) {
+  const authenticatedUserId = req.user.id
+
+  // ok: feedback-userid-no-confiar-cliente
+  await FeedbackModel.create({
     comment: req.body.comment,
-    rating: req.body.rating
-  };
-  return feedback;
-}
-
-function guardarComentarioInseguroAlternativo(request) {
-  const feedback = {
-    // ruleid: feedback-userid-no-confiar-cliente
-    UserId: request.body.userId,
-    comment: request.body.comment
-  };
-  return feedback;
-}
-
-function guardarComentarioSeguro(req) {
-  const feedback = {
-    // ok: feedback-userid-no-confiar-cliente
-    UserId: req.user.id,
-    comment: req.body.comment,
-    rating: req.body.rating
-  };
-  return feedback;
-}
-
-function guardarComentarioSeguroConSesion(request) {
-  const feedback = {
-    // ok: feedback-userid-no-confiar-cliente
-    UserId: request.session.userId,
-    comment: request.body.comment
-  };
-  return feedback;
+    UserId: authenticatedUserId,
+    rating: 3
+  })
 }

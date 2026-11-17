@@ -33,9 +33,8 @@ Tratamiento: **mitigar** (con el requerimiento #n que lo cubre), **aceptar** (co
 
 Escriba los ID de riesgo en la celda que les corresponde.
 
-```
-            Impacto 1     Impacto 2     Impacto 3
-P 3      |             |     R-02/R-03/R-06        |      R05       |
-P 2      |             |             |             |       R-01/R-04     
-P 1      |             |             |             |
-```
+| Probabilidad \ Impacto | Impacto 1| Impacto 2 | Impacto 3|
+|:----------------------:|:---------:|:----------:|:---------:|
+| **P3**          | —         | R-02, R-03, R-06 | R-05 |
+| **P2**         | —         | —          | R-01, R-04 |
+| **P1*          | —         | —          | — |
